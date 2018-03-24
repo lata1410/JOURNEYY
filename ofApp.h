@@ -35,13 +35,17 @@ class ofApp : public ofBaseApp{
 
 	ofxPanel gui;
 	ofxGuiGroup grupo;
-	string images[3];
+	vector<string> images;
 	float flage;
 	float guardarSeno;
 	bool renderGui;
 	bool sumaresta;
 	bool setupAnadirTira;
 	bool anadirTira;
+	string path = "images";
+	ofDirectory dir;
+	int dirAnterior;
+	
 	
 	vector<ofParameter<float>> vectorAnchos;
 	vector<ofParameter<float>> vectorAltos;
@@ -61,8 +65,8 @@ class ofApp : public ofBaseApp{
 	ofParameter<float> rotx{"Rotar X",0,-1,1};
 	ofParameter<float> roty{"Rotar Y",0,-1,1};
 	ofParameter<float> rotz{"Rotar Z",0,-1,1};
-	ofParameter<float> sen{"Velocidad",0,0,0.001};
-	ofParameter<int> ruta{"Imagen",0,0,2};
+	ofParameter<float> sen{"Velocidad",0, -0.001,0.001};
+	ofParameter<int> ruta{"Imagen",0,0, dir.size()};
 	ofParameter<float> enX{"Posicion X", 0, -ofGetWidth()/2, ofGetWidth()/2};
 	ofParameter<float> enY{"Posicion Y", 2, 0, 15};
 	ofParameter<float> escalarX{"Escalar X",1,0,20};
@@ -75,5 +79,5 @@ class ofApp : public ofBaseApp{
 	int o = 0;
 	ofColor firstColor;
 	ofColor secColor;
-	
+
 };

@@ -7,12 +7,20 @@ void ofApp::setup(){
 	renderGui = true;
 	//Donde inician las primer imagen
 	flage = -(ofGetHeight()/2);
+
 	
 	//Imagenes en array
-	images[0] = "yo.jpg";
-	images[1] = "sea.jpg";
-	images[2] = "grass.jpg";
+	ofDirectory dir2(path);
+	dir = dir2;
+	dir.listDir();
+	for(int i = 0; i < dir.size(); i++) {
+		images.push_back(dir.getPath(i));
+	}
+	cout << images.size() << endl;
 	
+	//Setea el gui de imagenes desde 0 hasta la cabtidad de imagenes que halla en la carpeta antes de arrancar el programa
+	ofParameter<int> ruta{"Imagen",0,0, dir.size()};
+
 	//For que inicializa la primer tira de imagenes(Cortes)
 	for(int i = 0; i<45; i++) {
 		Corte cort;
@@ -62,23 +70,27 @@ void ofApp::setup(){
 	secColor.r = ofRandom(255);
 	secColor.g = ofRandom(255);
 	secColor.b = ofRandom(255);
-
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+	dir.listDir();
+	if(dir.size() > dirAnterior){
+		images.push_back(dir.getPath(dir.size()-1));
+		dirAnterior = dir.size();
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
 	//Background en gradiente con dos colores que luego va a ser tomados de alguna de las texturas de las tiras que esten en la pantalla
 	ofBackgroundGradient(firstColor, secColor, OF_GRADIENT_LINEAR);
+	//Frame Rate
+	ofDrawBitmapString(ofToString(ofGetFrameRate()), 10, 10);
 	//Dibuja la GUI
 	gui.draw();
 	//Traslada el centro al medio de la pantalla
 	ofTranslate(ofGetWidth()/2, ofGetHeight()/2);
-	
 	//A–ade tira de imagenes si la booleana andirTira es verdadera
 	if(anadirTira == true){
 		setupAnadirTira = true;
@@ -102,7 +114,7 @@ void ofApp::draw(){
 		ofParameter<float> roty{"Rotar Y",0,-1,1};
 		ofParameter<float> rotz{"Rotar Z",0,-1,1};
 		ofParameter<float> sen{"Velocidad",0,0,0.001};
-		ofParameter<int> ruta{"Imagen",0,0,2};
+		ofParameter<int> ruta{"Imagen",0,0, images.size()};
 		ofParameter<float> enX{"Posicion X", 0, -ofGetWidth()/2, ofGetWidth()/2};
 		ofParameter<float> enY{"Posicion Y", 2, 0, 20};
 		ofParameter<float> escalarX{"Escalar X",1,0,20};
@@ -130,18 +142,16 @@ void ofApp::draw(){
 		aver.add(vectorEscalarX[myVect.size()-1]);
 		aver.add(vectorEscalarY[myVect.size()-1]);
 		gui.add(aver);
-		
 	}
 	
 	//RENDER
 	for ( int w = 0; w<myVect.size(); w++ ) {
-		
-	for ( int i = 0 ; i<myVect[0].size(); i++ ) {
-		
-		if ( ofGetElapsedTimeMillis() % 1000 == 0 ){
-			firstColor = myVect[w][i].p.getColor(ofRandom(myVect[w][i].p.getWidth()), ofRandom(myVect[w][i].p.getHeight()));
-			secColor = myVect[w][i].p.getColor(ofRandom(myVect[w][i].p.getWidth()), ofRandom(myVect[w][i].p.getHeight()));
-		}
+		for ( int i = 0 ; i<myVect[0].size(); i++ ) {
+			//Valores random para el gradient del background
+			if ( ofGetElapsedTimeMillis() % 1000 == 0 ){
+				firstColor = myVect[w][i].p.getColor(ofRandom(myVect[w][i].p.getWidth()), ofRandom(myVect[w][i].p.getHeight()));
+				secColor = myVect[w][i].p.getColor(ofRandom(myVect[w][i].p.getWidth()), ofRandom(myVect[w][i].p.getHeight()));
+			}
 
 		//GUI
 		myVect[w][i].wid = vectorAnchos[w];
@@ -153,7 +163,7 @@ void ofApp::draw(){
 		myVect[w][i].sumY = vectorEnY[w];
 		myVect[w][i].scaleX = vectorEscalarX[w];
 		myVect[w][i].scaleY = vectorEscalarY[w];
-		myVect[w][i].seno+=vectorSen[w];
+		myVect[w][i].seno += vectorSen[w];
 		guardarSeno = myVect[w][i].seno;
 		
 		myVect[w][i].draw();
