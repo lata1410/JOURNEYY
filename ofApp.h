@@ -13,7 +13,6 @@ class ofApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
-
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
@@ -28,56 +27,24 @@ class ofApp : public ofBaseApp{
 	
 	//Mis variables
 
-	vector <vector <Corte>> myVect;
-	vector<Corte> loVectore[100];
-	int indexV = 0;
-
-
+	//Vector de vectores de cortes (tiras) 
+	vector <Tira> myVect;
 	ofxPanel gui;
-	ofxGuiGroup grupo;
-	vector<string> images;
+	ofParameterGroup tiraGroup;
 	float flage;
 	float guardarSeno;
 	bool renderGui;
-	bool sumaresta;
-	bool setupAnadirTira;
-	bool anadirTira;
+	bool anadirTiraV;
+	bool anadirTiraH;
+	bool setupTira;
+	bool nuevatira;
 	string path = "images";
 	ofDirectory dir;
 	int dirAnterior;
-	
-	
-	vector<ofParameter<float>> vectorAnchos;
-	vector<ofParameter<float>> vectorAltos;
-	vector<ofParameter<float>> vectorRotX;
-	vector<ofParameter<float>> vectorRotY;
-	vector<ofParameter<float>> vectorRotZ;
-	vector<ofParameter<float>> vectorSen;
-	vector<ofParameter<int>> vectorRuta;
-	vector<ofParameter<float>> vectorEnX;
-	vector<ofParameter<float>> vectorEnY;
-	vector<ofParameter<float>> vectorEscalarX;
-	vector<ofParameter<float>> vectorEscalarY;
-
-	
-	ofParameter<float> ancho{"Ancho",200,0,ofGetWidth()};
-	ofParameter<float> alto{"Alto",20,0,ofGetHeight()};
-	ofParameter<float> rotx{"Rotar X",0,-1,1};
-	ofParameter<float> roty{"Rotar Y",0,-1,1};
-	ofParameter<float> rotz{"Rotar Z",0,-1,1};
-	ofParameter<float> sen{"Velocidad",0, -0.001,0.001};
-	ofParameter<int> ruta{"Imagen",0,0, dir.size()};
-	ofParameter<float> enX{"Posicion X", 0, -ofGetWidth()/2, ofGetWidth()/2};
-	ofParameter<float> enY{"Posicion Y", 2, 0, 15};
-	ofParameter<float> escalarX{"Escalar X",1,0,20};
-	ofParameter<float> escalarY{"Escalar Y",1,0,20};
-	
-	//ofParameter<float> enY{"Posicion Y", 2, -ofGetHeight(), ofGetHeight()};
-	//ofParameter<float> enZ{"Posicion Z", 0, -ofGetWidth(), ofGetWidth()};
-	//vector <vector <Corte>> loVectore;
-	//vector<Corte> dos;
 	int o = 0;
 	ofColor firstColor;
 	ofColor secColor;
+	Tira newTira;
+
 
 };
