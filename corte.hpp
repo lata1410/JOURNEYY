@@ -27,6 +27,9 @@ public:
 	int dirAnterior;
 	vector<string> images;
 	ofParameterGroup tiraParameters;
+	ofParameter<float> sepY;
+	ofParameter<float> seVaEnY;
+
 	ofParameter<float> ancho;
 	ofParameter<float> alto;
 	ofParameter<float> rotx;
@@ -57,7 +60,7 @@ public:
 		ofPixels p;
 		ofTexture latextu;
 		float seno;
-		float x, y, z, wid, hei, rotX, rotY, rotZ, sumX, sumY, scaleX, scaleY, grados;
+		float x, y, z, wid, hei, rotX, rotY, rotZ, sumX, sumY, scaleX, scaleY, grados, seVaEnY;
 		string rutaImagen;
 		string rutaAnterior;
 	};
@@ -65,11 +68,13 @@ public:
 	vector<Corte> loVectore[100];
 	int indexV = 0;
 	//Donde inician las primer imagen
-	float flage = -(ofGetHeight()/2);
+	float flageV = ofGetHeight()/2;
+	float flageH =  -(ofGetWidth()/2);
 	vector<Corte> cortes;
 	int rutaAnterior = 0;
 	string rutaActual;
 	bool cambio = false;
+	float anteriorsepY, anteriorsepX;
 	~Tira();
 };
 

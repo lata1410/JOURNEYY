@@ -33,25 +33,31 @@ void ofApp::setup(){
 void ofApp::update(){
 	for ( int w = 0; w < myVect.size(); w++ ) {
 		if(myVect.size() > 0){
-			myVect[w].update();
+			//Puede ser que sedesfasen a no eliminar el elemento de gui
 			if( myVect[w].destruir == 1 ){
-				cout << "Cosas en TiraGroup: " + ofToString(tiraGroup.size()) << endl;
-				cout << "W es: " + ofToString(w) << endl;
-				myVect.erase(myVect.begin() + w);
+				int tope = myVect[w-1].tiraParameters.size();
+				for(int i = 0; i < tope; i++ ){
+					myVect[w].tiraParameters.remove(myVect[w].tiraParameters.back());
+				}
 				tiraGroup.remove(w);
-//				cout << w << endl;
-//				tiraGroup.remove(w-1);
-
+				myVect[w].tiraParameters.setName("D");
 				gui.setup(tiraGroup);
+				myVect.erase(myVect.begin() + w);
+				//myVect[w].tiraParameters.setName("Tira " + ofToString(w));
 			}
+			myVect[w].update();
 		}
 	}
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+	cout << myVect.size() << endl;
+	cout << tiraGroup.size() << endl;
+
 	//Background en gradiente con dos colores que luego va a ser tomados de alguna de las texturas de las tiras que esten en la pantalla
-	ofBackgroundGradient(firstColor, secColor, OF_GRADIENT_LINEAR);
+	//ofBackgroundGradient(firstColor, secColor, OF_GRADIENT_LINEAR);
+	ofBackground(0);
 	//Frame Rate
 	ofDrawBitmapString(ofToString(ofGetFrameRate()), 10, 10);
 	//Dibuja la GUI
@@ -72,12 +78,12 @@ void ofApp::draw(){
 				myVect[myVect.size()-1].setup( true );
 				setupTira = false;
 			}
-			if( myVect[myVect.size()-1].cortes.size() < 45 ){
+			if( myVect[myVect.size()-1].cortes.size() < 12 ){
 				myVect[myVect.size()-1].anadirCorte();
 			}
 		
 		
-		if ( myVect[myVect.size()-1].cortes.size() == 45 ) {
+		if ( myVect[myVect.size()-1].cortes.size() == 12 ) {
 			myVect[myVect.size()-1].tiraParameters.setName("Tira " + ofToString(myVect.size()-1));
 			tiraGroup.add(myVect[myVect.size()-1].tiraParameters);
 			gui.setup(tiraGroup);

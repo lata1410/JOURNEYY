@@ -17,6 +17,10 @@ Tira::Tira(){
 Tira::~Tira(){
 	cout << "Elemento Destruido" << endl;
 }
+
+
+
+
 void Tira::setup(bool _vorh){
 	vorh = _vorh;
 	
@@ -30,6 +34,9 @@ void Tira::setup(bool _vorh){
 	
 	//ofParameterGroup setup
 	tiraParameters.setName("Tira Controles");
+//	tiraParameters.add(sepY.set("Y",0,0,200));
+	tiraParameters.add(seVaEnY.set("Colision en Y",4,0,40));
+
 	if (vorh == true){
 		tiraParameters.add(ancho.set("Ancho",200,0,ofGetWidth()));
 		tiraParameters.add(alto.set("Alto",20,0,ofGetHeight()));
@@ -47,32 +54,35 @@ void Tira::setup(bool _vorh){
 		tiraParameters.add(enX.set("Posicion X", 0, -ofGetWidth()/2, ofGetWidth()/2));
 		tiraParameters.add(enY.set("Posicion Y", 0, 0, 15));
 	}else {
-		tiraParameters.add(enX.set("Posicion X", 0, 0, 15));
+		tiraParameters.add(enX.set("Posicion X", 1, 0, 15));
 		tiraParameters.add(enY.set("Posicion Y", 0, -ofGetHeight()/2, ofGetHeight()/2));
 	}
 	tiraParameters.add(escalarX.set("Escalar X", 1, 0, 20));
 	tiraParameters.add(escalarY.set("Escalar Y", 1, 0, 20));
 	tiraParameters.add(destruir.set("DESTRUIR", 0,0,1));
+	
 }
 
+
+
+
 void Tira::anadirCorte(){
-	//For que inicializa la primer tira de imagenes(Cortes)
 	if(vorh == true){
-			//flage = -(ofGetHeight()/2);
 			Corte cort;
-			cort.setup(0, flage, 0, 200, 20, 0, ofRandom(300), "images/1.jpg", 0, 1, 0,1, vorh);
-			flage = flage + 20;
+			cort.setup(0, flageV, 0, 200, 20, 0, ofRandom(300), "images/1.jpg", 0, 1, 0,1, vorh);
+			flageV = flageV - 20;
 			//Guarda los cortes en el vector
 			cortes.push_back(cort);
 	}else{
-			//flage = -(ofGetWidth()/2);
 			Corte cort;
-			cort.setup(flage, -(ofGetHeight()/2), 0, 20, 200, 0, ofRandom(300), "images/yo.jpg", 0, 0, 1,1, vorh);
-			flage = flage + 20;
+			cort.setup(flageH, -(ofGetHeight()/2), 0, 20, 200, 0, ofRandom(300), "images/1.jpg", 0, 0, 1,1, vorh);
+			flageH = flageH + 20;
 			//Guarda los cortes en el vector
 			cortes.push_back(cort);
-	}	
+	}
 }
+
+
 
 void Tira::update(){
 	ofDirectory dir2(path);
@@ -83,6 +93,13 @@ void Tira::update(){
 		dirAnterior = dir.size();
 	}
 	for(int i = 0; i < cortes.size(); i++){
+//		if(sepY != anteriorsepY){
+//			cortes[i].y = cortes[i].y + sepY;
+//			if (i == cortes.size()-1){
+//				anteriorsepY = sepY;
+//			}
+//		}
+		cortes[i].seVaEnY = seVaEnY;
 		cortes[i].wid = ancho;
 		cortes[i].hei = alto;
 		cortes[i].rotX = rotx;
@@ -97,8 +114,11 @@ void Tira::update(){
 		guardarSeno = cortes[i].seno;
 		cortes[i].rutaImagen = ofToString(dir.getPath(ruta));
 //		cout << cortes[i].rutaImagen << endl;
+
 	}
 }
+
+
 
 
 //Metodos de Corte
@@ -123,15 +143,14 @@ void Tira::Corte::setup(float posx, float posy, float posz, float width, float h
 	ofLoadImage(p, rutaImagen);
 	//Fijarse de poder perillear con gui el wid y el height de los crops
 	if(verOrHor == true){
-		p.crop(0, ofRandom(50, imagen.getHeight()-50), p.getWidth(), 200);
+		p.crop(ofRandom(0, imagen.getWidth() - wid), ofRandom(0, imagen.getHeight() - hei), 200, 20);
 	}
 	else {
-		p.crop(ofRandom(50, imagen.getWidth()-50), 0, 20, p.getHeight());
+		p.crop(ofRandom(0, imagen.getWidth() - wid), ofRandom(50, imagen.getHeight() - hei), 20, 200);
 	}
 	p.resize(wid, hei);
 	latextu.loadData(p);
 	sumador = sum;
-	//x = x+primerPosX;
 	if (primerPosX < 0){
 		sumador = ofRandom(0,20);
 	} else{
@@ -144,25 +163,27 @@ void Tira::Corte::setup(float posx, float posy, float posz, float width, float h
 
 
 void Tira::Corte::draw(){
-	ofRotate(sin(seno) * grados, rotX, rotY, rotZ);
+	if(rotX != 0 || rotY != 0 || rotZ != 0){
+		ofRotate(sin(seno) * grados, rotX, rotY, rotZ);
+	}
 	ofPushMatrix();
 	latextu.setAnchorPoint(latextu.getWidth()/2, latextu.getHeight()/2);
 	//Posible ponerles senos a los scale. Ej: sin(seno)*scaleY
 	ofScale(scaleX, scaleY);
 	if( verOrHor == true){
-		latextu.draw(sumX, y+=sumY, z, wid, hei);
+		latextu.draw(sin(seno)*sumX, y+=sumY, z, wid, hei);
 	}else{
 		latextu.draw(x+=sumX, sumY, z, wid, hei);
-
 	}
 	ofPopMatrix();
+
 }
 
 void Tira::Corte::colisiona(){
 	if( verOrHor == true ){
-		if(y >= ofGetHeight()/2 + 20*4){
+		if(y >= ofGetHeight()/2 + 20*seVaEnY){
 			x = 0;
-			y = (0 - ofGetHeight()/2) - hei;
+			y = (0 - ofGetHeight()/2) - hei*seVaEnY;
 			if(rutaImagen != rutaAnterior){
 				cambioImg();
 				rutaAnterior = rutaImagen;
@@ -187,9 +208,12 @@ void Tira::Corte::colisiona(){
 void Tira::Corte::cambioImg(){
 	imagen.load(rutaImagen);
 	ofLoadImage(p, rutaImagen);
-	p.crop(0, ofRandom(50, imagen.getHeight()-50), p.getWidth(), 200);
+	if(verOrHor == true){
+		p.crop(ofRandom(0, imagen.getWidth() - wid), ofRandom(0, imagen.getHeight() - hei), 200, 20);
+	}
+	else {
+		p.crop(ofRandom(0, imagen.getWidth() - wid), ofRandom(50, imagen.getHeight() - hei), 20, 200);
+	}
 	p.resize(wid, hei);
 	latextu.loadData(p);
-//	imagen.resize(wid, hei);
-//	imagen.crop(0, ofRandom(50, imagen.getHeight()-50), p.getWidth(), 200);
 }
